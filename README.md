@@ -51,7 +51,7 @@ def run(
 
     Arguments:
         a: An integer argument.
-        b: A floating point argument.
+        b: A floating point value or a sequence of ints.
         c: A dictionary with string keys and
             bool values. If this was python 3.8
             we would instead use typing.Dict[str, bool] as
@@ -103,7 +103,7 @@ fields:
   a: <int>              An integer argument.
 
   b: <float> | [<int>, ...]
-                        A floating point argument or a sequence of ints.
+                        A floating point value or a sequence of ints.
 
   c: {<str>: <bool>, ...}
                         A dictionary with string keys and bool values. If this
