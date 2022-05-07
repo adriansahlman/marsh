@@ -11,6 +11,7 @@ author = 'Adrian Sahlman'
 
 # The full version, including alpha/beta/rc tags
 release = marsh.__version__
+version = release
 
 
 # -- General configuration ---------------------------------------------------
