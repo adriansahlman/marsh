@@ -1,0 +1,53 @@
+name: Review
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.8']
+    steps:
+      - name: Checkout code in ${{ matrix.os }}
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: 'requirements*.txt'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Codestyle
+        run: |
+          make lint-style
+      - name: Static type checking
+        run: |
+          make lint-mypy
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        python-version: ['3.8', '3.9', '3.10']
+    steps:
+      - name: Checkout code in ${{ matrix.os }}
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: 'requirements*.txt'
+      - name: Install marsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install .
+      - name: Run pytest
+        run: |
+          pytest

@@ -1,0 +1,4 @@
+include marsh/py.typed
+global-exclude *.pyc
+global-exclude __pycache__
+recursive-include marsh/*

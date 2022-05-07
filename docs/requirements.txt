@@ -1,0 +1,5 @@
+-r ../requirements.txt
+
+sphinx >= 4.5
+sphinx_rtd_theme
+sphinx-autodoc-typehints

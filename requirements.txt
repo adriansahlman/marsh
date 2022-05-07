@@ -1,0 +1,19 @@
+# marsh
+typing-extensions >= 4.2
+omegaconf >= 2.1.1
+docstring-parser >= 0.7.3
+
+# linting
+mypy == 0.950
+flake8 >= 3.8
+
+# formating
+add-trailing-comma >= 2.2.2
+
+# testing
+pytest >= 6.1.2
+
+# stubs
+types-PyYAML
+types-setuptools
+types-typing-extensions >= 3.7.3
