@@ -49,6 +49,23 @@ to them from the docstring of the function.
         run()
 
 
+.. note::
+
+    Mypy will report an error on the line ``run()`` as no arguments
+    were supplied. Set the default value of arguments to
+    :attr:`marsh.MISSING` to retain the same behavior from marsh
+    without mypy errors.
+
+
+.. note::
+
+    Any arguments passed to ``run()`` become new default values.
+    For the code above, if we call ``run(b=0)`` the ``b`` argument
+    becomes optional on the command line as there is now a default
+    value. This can also be accomplished by having a default value
+    in the function signature.
+
+
 Run
 ^^^
 

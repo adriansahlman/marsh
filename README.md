@@ -9,6 +9,8 @@ Relies heavily on type-hint reflection. All (un)marshaling is performed recursiv
 
 Influenced by the work of [Omry Yadan](https://github.com/omry) on [hydra](hydra.cc).
 
+The [documentation](marsh.readthedocs.io) is hosted on ReadTheDocs.
+
 ## Getting Started
 
 ### Install
@@ -26,6 +28,8 @@ create entry points for python code.
 These entry points allow for arguments to be given on the command
 line and/or through config files which are then validated, converted to the correct types and passed to the entry point function.
 
+Most python types are supported (primitives, type aliases, dataclasses, namedtuple e.t.c.)
+
 #### Create
 
 Creating an entry point is as simple as decorating a function
@@ -34,12 +38,13 @@ and calling it without arguments.
 ```python
 # app.py
 import marsh
+from typing import Sequence, Union
 
 
 @marsh.main
 def run(
     a: int,
-    b: float,
+    b: Union[float, Sequence[int]],
     c: dict[str, bool],
 ) -> None:
     """Example of an entry point.
@@ -84,20 +89,21 @@ failed to unmarshal config: int: could not convert: 1.5
 	path: a
 ```
 ```shell
-$ python app.py a=1 c.some_key=true
+$ python app.py b=0 c.some_key=true
 failed to unmarshal config: MissingValueError
-	path: b
+	path: a
 ```
 
 #### Help
 
 Using --help we can also get a help message for the arguments. Here the output was piped to `tail` to truncate the output into displaying only the arguments of our entry point.
 ```shell
-$ python app.py --help | tail
+$ python app.py --help | tail -n 11
 fields:
   a: <int>              An integer argument.
 
-  b: <float>            A floating point argument.
+  b: <float> | [<int>, ...]
+                        A floating point argument or a sequence of ints.
 
   c: {<str>: <bool>, ...}
                         A dictionary with string keys and bool values. If this

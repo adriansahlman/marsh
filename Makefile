@@ -1,3 +1,4 @@
+.PHONY: review
 .PHONY: lint lint-style lint-mypy lint-release
 .PHONY: format
 .PHONY: test docker-test docker-build-test
@@ -5,6 +6,12 @@
 
 
 add_cwd_to_path = PATH=$(shell pwd):$${PATH} PYTHONPATH=$(shell pwd):$${PYTHONPATH}
+
+
+# --------------Review-------------- #
+
+
+review : lint test
 
 
 # --------------Lint-------------- #

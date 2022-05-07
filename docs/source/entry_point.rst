@@ -40,6 +40,10 @@ it might be preferable to use that as a single argument to the entry point.
         print(config)
 
 
+    if __name__ == '__main__':
+        main()
+
+
 However, this requires us to use the keyword ``'config'`` before each
 argument on the command line. It also creates an unnecessary nesting
 of arguments in the help message.
