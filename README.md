@@ -9,7 +9,7 @@ Relies heavily on type-hint reflection. All (un)marshaling is performed recursiv
 
 Influenced by the work of [Omry Yadan](https://github.com/omry) on [hydra](hydra.cc).
 
-The [documentation](marsh.readthedocs.io) is hosted on ReadTheDocs.
+The [documentation](https://marsh.readthedocs.io) is hosted on ReadTheDocs.
 
 ## Getting Started
 
