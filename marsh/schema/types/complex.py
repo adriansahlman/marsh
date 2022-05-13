@@ -47,8 +47,10 @@ class ComplexMarshalSchema(marsh.schema.MarshalSchema):
 
     def marshal(
         self,
-    ) -> dict:
+    ) -> Union[float, dict]:
         c = complex(self.value)
+        if c.imag == 0:
+            return c.real
         return dict(
             real=c.real,
             imag=c.imag,

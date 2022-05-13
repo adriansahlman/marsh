@@ -80,8 +80,8 @@ class CustomComplex(numbers.Complex):
 @pytest.mark.parametrize(
     'value,element',
     (
-        (complex(), dict(real=0, imag=0)),
-        (complex(1.5), dict(real=1.5, imag=0)),
+        (complex(), 0),
+        (complex(1.5), 1.5),
         (complex(imag=2.5), dict(real=0, imag=2.5)),
         (CustomComplex(1.1, 2.2), dict(real=1.1, imag=2.2)),
     ),
