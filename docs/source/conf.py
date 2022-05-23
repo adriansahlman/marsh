@@ -37,7 +37,10 @@ autodoc_typehints = 'description'
 # Add any paths that contain templates here, relative to this directory.
 templates_path: list = []
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+intersphinx_mapping = {
+  'python': ('https://docs.python.org/3', None),
+  'dateparser': ('https://dateparser.readthedocs.io/en/stable/', None),
+}
 
 # The suffix(es) of source filenames.
 source_suffix = '.rst'
