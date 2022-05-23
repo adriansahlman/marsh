@@ -48,6 +48,7 @@ setup(
         'typing-extensions >= 4.2',
         'omegaconf >= 2.1.1',
         'docstring-parser >= 0.7.3',
+        'dateparser >= 1.1.1',
     ),
     python_requires='>=3.8',
     zip_safe=False,
