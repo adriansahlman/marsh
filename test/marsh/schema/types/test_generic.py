@@ -1,5 +1,6 @@
 from typing import (
     Any,
+    Iterator,
     Optional,
     Type,
 )
@@ -7,6 +8,36 @@ from typing import (
 import pytest
 
 import marsh.testing
+
+
+class IterableClass:
+
+    def __iter__(
+        self,
+    ) -> Iterator[int]:
+        for i in range(3):
+            yield i
+
+
+class IteratorClass:
+
+    def __init__(
+        self,
+    ) -> None:
+        self.i = -1
+
+    def __next__(
+        self,
+    ) -> int:
+        self.i += 1
+        if self.i >= 3:
+            raise StopIteration
+        return self.i
+
+    def __iter__(
+        self,
+    ) -> Iterator[int]:
+        return self
 
 
 class WithoutArgs:
@@ -116,6 +147,31 @@ def echo(
     return x
 
 
+def positional_only(
+    x: int,
+    /,
+    y: int,
+) -> int:
+    return x + y
+
+
+@pytest.mark.parametrize(
+    'value,element',
+    (
+        (IteratorClass(), (0, 1, 2)),
+        (IterableClass(), (0, 1, 2)),
+    ),
+)
+def test_marshal_succeeds(
+    value: Any,
+    element: marsh.element.ElementType,
+) -> None:
+    marsh.testing.marshal_succeeds(
+        value=value,
+        element=element,
+    )
+
+
 @pytest.mark.parametrize(
     'type_,element,value',
     (
@@ -134,6 +190,8 @@ def echo(
         (X, {'optional_keyword': '0', 'a': '0.5'}, X(optional_keyword='0', a=0.5)),
         (Echo(), (5,), 5),
         (echo, (5,), 5),
+        (positional_only, dict(x=5, y=3), 8),
+        (positional_only, (5, 3), 8),
     ),
 )
 def test_unmarshal_succeeds(

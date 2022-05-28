@@ -28,6 +28,9 @@ class StructuredUnmarshalSchema(UnmarshalSchema[_T]):
     schemas: Mapping[str, UnmarshalSchema]
     """The schemas for the fixed attributes."""
 
+    positional: Sequence[str] = ()
+    """Names of attributes that can only be used as positional arguments."""
+
     def __str__(
         self,
     ) -> str:
@@ -215,6 +218,8 @@ class StructuredUnmarshalSchema(UnmarshalSchema[_T]):
                                     marsh.MISSING,
                                 ),
                             )
+                        if name in self.positional:
+                            args.append(kwargs.pop(name))
         for key in element_dict:
             raise marsh.errors.UnmarshalError(
                 f'{marsh.utils.get_type_name(self.value)}: '

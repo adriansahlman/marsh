@@ -86,7 +86,9 @@ _AnnotatedInstanceTypes: list = [
 
 
 _K = TypeVar('_K')
+_K_contra = TypeVar('_K_contra', contravariant=True)
 _V = TypeVar('_V')
+_V_co = TypeVar('_V_co', covariant=True)
 _T = TypeVar('_T')
 _C = TypeVar('_C', bound=Callable)
 _P = TypeVar('_P', int, float, bool, str)
@@ -115,7 +117,7 @@ class SequenceProtocol(Protocol):
 
 
 @runtime_checkable
-class MappingProtocol(Protocol):
+class MappingProtocol(Protocol[_K_contra, _V_co]):
     """Protocol matching a mapping class."""
 
     def __contains__(
@@ -133,6 +135,21 @@ class MappingProtocol(Protocol):
     def __iter__(
         self,
     ):
+        ...
+
+    @overload
+    def get(
+        self,
+        key: _K_contra,
+    ) -> Optional[_V_co]:
+        ...
+
+    @overload
+    def get(
+        self,
+        key: _K_contra,
+        default: _T,
+    ) -> Union[_V_co, _T]:
         ...
 
     def get(
@@ -1253,10 +1270,10 @@ class PriorityOrder(Sequence[_T], Generic[_T]):
             for i, position in enumerate(self._values):
                 if wrapped.relative_priority > position.relative_priority:
                     break
-                if wrapped.relative_priority < position.relative_priority:
-                    idx = i
-                    continue
-                if wrapped.priority < position.priority:
+                if (
+                    wrapped.relative_priority < position.relative_priority
+                    or wrapped.priority < position.priority
+                ):
                     idx = i + 1
             self._values.insert(idx, wrapped)
             return value
@@ -1641,6 +1658,31 @@ def is_defaultdict_type(
     try:
         return issubclass(value, collections.defaultdict)
     except TypeError:
+        return False
+
+
+def is_callable(
+    value: Any,
+) -> bool:
+    """Determine if a value is callable.
+
+    Always returns ``False`` if the value is
+    a protocol or typing alias.
+
+    Arguments:
+        value: Any value to evaluate.
+
+    Returns:
+        ``True`` if value is a callable,
+        else ``False``.
+    """
+    try:
+        return (
+            callable(value)
+            and not is_protocol(value)
+            and not is_typing_alias(value)
+        )
+    except Exception:
         return False
 
 

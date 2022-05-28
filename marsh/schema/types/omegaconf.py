@@ -7,18 +7,9 @@ from typing import (
 import omegaconf
 
 import marsh
-from . import (
-    mapping,
-    sequence,
-)
 
 
-@marsh.schema.register(
-    lower_priority=(
-        mapping.MappingMarshalSchema,
-        sequence.SequenceMarshalSchema,
-    ),
-)
+@marsh.schema.register
 class OmegaconfMarshalSchema(marsh.schema.MarshalSchema):
 
     value: Union[omegaconf.DictConfig, omegaconf.ListConfig]

@@ -63,6 +63,7 @@ class CallableUnmarshalSchema(structured.StructuredUnmarshalSchema[_T]):
                 var_positional = (name, schema)
             elif param.kind == param.VAR_KEYWORD:
                 var_keyword = (name, schema)
+        self.positional = tuple(positional)
         schemas = {}
         schemas.update(positional)
         if var_positional:

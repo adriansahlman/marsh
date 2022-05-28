@@ -72,7 +72,7 @@ def marshal_succeeds(
     marshaled = schema.marshal()
     element = marsh.element.standardize(element)
     marshaled = marsh.element.standardize(marshaled)
-    assert marshaled == element, f'{marshaled} != {element}'
+    assert marshaled == element, f'{marshaled} != {element}, schema={schema}'
     return marshaled
 
 

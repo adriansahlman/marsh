@@ -25,7 +25,7 @@ def is_generated_class_docstring(
     return False
 
 
-@marsh.schema.register(lower_priority=sequence.SequenceMarshalSchema)
+@marsh.schema.register
 class NamedTupleMarshalSchema(marsh.schema.MarshalSchema):
 
     @classmethod

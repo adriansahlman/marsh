@@ -101,7 +101,7 @@ docker-test :
 	then \
 		$(MAKE) docker-build-test DOCKER_PYTHON_VERSION=$(DOCKER_PYTHON_VERSION); \
 	fi;
-	@docker run --rm -v $(shell pwd):/marsh $(DOCKER_TEST_LATEST) pytest ${TEST}
+	@docker run --rm -e TEST=$(TEST) -v $(shell pwd):/marsh $(DOCKER_TEST_LATEST) /bin/bash -c 'test/main.sh'
 
 
 
