@@ -21,7 +21,7 @@ _INITVAR_SENTINEL = dataclasses._FIELD_INITVAR  # type: ignore
 
 
 def get_init_var_fields(
-    dataclass: Any
+    dataclass: Any,
 ) -> Tuple[dataclasses.Field, ...]:
     return tuple(
         field
@@ -100,7 +100,7 @@ class DataclassUnmarshalSchema(marsh.schema.template.StructuredUnmarshalSchema[_
         schemas = {}
 
         def resolve_type(
-            type_: Any
+            type_: Any,
         ) -> Any:
             try:
                 if isinstance(type_, (str, ForwardRef)):

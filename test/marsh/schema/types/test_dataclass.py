@@ -57,7 +57,7 @@ class WithoutInit:
     a: int = dataclasses.field(init=False)
 
     def __post_init__(
-        self
+        self,
     ) -> None:
         self.a = 0
 
@@ -75,7 +75,7 @@ class WithInitVar:
 
     def __eq__(
         self,
-        other
+        other,
     ) -> bool:
         if not type(other) == type(self):
             return False
