@@ -47,8 +47,8 @@ class MarshError(Exception):
         cause: bool = False,
     ) -> str:
         msg = self.__class__.__name__
-        if self.args and self.path:
-            msg = ', '.join(map(str, self.args))
+        if self.args:
+            msg += ': ' + ', '.join(map(str, self.args))
         if self.path:
             msg = f'{msg}\n\tpath: {self.path}'
         if cause:

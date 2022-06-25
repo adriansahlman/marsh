@@ -51,6 +51,37 @@ class WithClassVarWithDefault:
     a: ClassVar[int] = 3
 
 
+@dataclasses.dataclass
+class WithoutInit:
+
+    a: int = dataclasses.field(init=False)
+
+    def __post_init__(
+        self
+    ) -> None:
+        self.a = 0
+
+
+@dataclasses.dataclass(eq=False)
+class WithInitVar:
+
+    a: dataclasses.InitVar[int] = 0
+
+    def __post_init__(
+        self,
+        a,
+    ) -> None:
+        self.a = a
+
+    def __eq__(
+        self,
+        other
+    ) -> bool:
+        if not type(other) == type(self):
+            return False
+        return other.a == self.a
+
+
 A_dict = {
     'int_field': 0,
     'str_field': 'a',
@@ -75,6 +106,8 @@ A_altered_dict['int_field'] = 3
         (B(), B_dict),
         (WithClassVar(), {}),
         (WithClassVarWithDefault(), {}),
+        (WithoutInit(), {}),
+        (WithInitVar(), {}),
     ),
 )
 def test_marshal_succeeds(
@@ -97,6 +130,10 @@ def test_marshal_succeeds(
         (B, B_dict, B()),
         (WithClassVar, {}, WithClassVar()),
         (WithClassVarWithDefault, {}, WithClassVarWithDefault()),
+        (WithoutInit, {}, WithoutInit()),
+        (WithInitVar, marsh.MISSING, WithInitVar(0)),
+        (WithInitVar, {}, WithInitVar(0)),
+        (WithInitVar, {'a': 3}, WithInitVar(3)),
     ),
 )
 def test_unmarshal_succeeds(

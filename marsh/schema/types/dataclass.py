@@ -5,6 +5,7 @@ from typing import (
     Any,
     ForwardRef,
     Optional,
+    Tuple,
     TypeVar,
     get_type_hints,
 )
@@ -13,6 +14,24 @@ import marsh
 
 
 _T = TypeVar('_T')
+
+
+_FIELDS = getattr(dataclasses, '_FIELDS', '__dataclass_fields__')
+_INITVAR_SENTINEL = dataclasses._FIELD_INITVAR  # type: ignore
+
+
+def get_init_var_fields(
+    dataclass: Any
+) -> Tuple[dataclasses.Field, ...]:
+    return tuple(
+        field
+        for field
+        in getattr(
+            dataclass,
+            _FIELDS,
+        ).values()
+        if field._field_type is _INITVAR_SENTINEL
+    )
 
 
 def is_generated_class_docstring(
@@ -61,6 +80,7 @@ class DataclassMarshalSchema(marsh.schema.MarshalSchema):
         return {
             field.name: marsh.marshal(getattr(self.value, field.name))
             for field in dataclasses.fields(self.value)
+            if field.init
         }
 
 
@@ -78,8 +98,10 @@ class DataclassUnmarshalSchema(marsh.schema.template.StructuredUnmarshalSchema[_
         except Exception:
             annotations = {}
         schemas = {}
-        for field in dataclasses.fields(self.value):
-            type_ = field.type
+
+        def resolve_type(
+            type_: Any
+        ) -> Any:
             try:
                 if isinstance(type_, (str, ForwardRef)):
                     type_ = annotations.get(field.name, type_)
@@ -94,7 +116,23 @@ class DataclassUnmarshalSchema(marsh.schema.template.StructuredUnmarshalSchema[_
                 raise marsh.errors.MarshError(
                     f'failed to resolve type from string: "{type_}"',
                 )
+            type_is_initvar = False
+            try:
+                type_is_initvar = isinstance(type_, dataclasses.InitVar)
+            except Exception:
+                pass
+            if type_is_initvar:
+                return resolve_type(type_.type)
+            return type_
+
+        for field in (
+            dataclasses.fields(self.value)
+            + get_init_var_fields(self.value)
+        ):
+            if not field.init:
+                continue
             with marsh.errors.prepend(field.name):
+                type_ = resolve_type(field.type)
                 schemas[field.name] = marsh.schema.UnmarshalSchema(
                     type_,
                     default=(
