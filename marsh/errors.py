@@ -61,12 +61,12 @@ class MarshError(Exception):
         return msg
 
     def __str__(
-        self
+        self,
     ) -> str:
         return self.pretty(cause=True)
 
     def __repr__(
-        self
+        self,
     ) -> str:
         return str(self)
 
