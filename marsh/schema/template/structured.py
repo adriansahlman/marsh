@@ -234,15 +234,7 @@ class StructuredUnmarshalSchema(UnmarshalSchema[_T]):
                 f'{marsh.utils.get_type_name(self.value)}: received too '
                 f'many arguments. unconsumed arguments: {element_list}',
             )
-        try:
-            return self.construct(*args, **kwargs)
-        except marsh.errors.MarshError:
-            raise
-        except Exception:
-            raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: failed to '
-                f'construct object using *args={args}, **kwargs={kwargs}',
-            )
+        return self.construct(*args, **kwargs)
 
     def construct(
         self,

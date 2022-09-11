@@ -60,6 +60,16 @@ class MarshError(Exception):
                 error = error.__cause__
         return msg
 
+    def __str__(
+        self
+    ) -> str:
+        return self.pretty(cause=True)
+
+    def __repr__(
+        self
+    ) -> str:
+        return str(self)
+
     def append(
         self,
         field: str,
