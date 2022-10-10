@@ -133,7 +133,7 @@ class YAMLConfigIO(ConfigSchema):
         element: marsh.element.ElementType,
     ) -> None:
         with open(self.value, 'w') as fp:
-            yaml.dump(element, fp)
+            yaml.safe_dump(element, fp)
 
     def load(
         self,
@@ -145,7 +145,7 @@ class YAMLConfigIO(ConfigSchema):
         self,
         element: marsh.element.ElementType,
     ) -> str:
-        return yaml.dump(element)
+        return yaml.safe_dump(element)
 
     def loads(
         self,
