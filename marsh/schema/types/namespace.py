@@ -44,7 +44,7 @@ class NamespaceMarshalSchema(marsh.schema.core.marshal.WrapperMarshalSchema):
             raise marsh.errors.MarshalError(
                 f'{marsh.utils.get_type_name(self.value)}: marshaling '
                 'is not supported for registered component that '
-                f'is not marshaled into a mapping element, got {element}',
+                f'is not marshaled into a mapping element',
             )
         if 'name' in element:
             raise marsh.errors.MarshalError(
@@ -135,12 +135,12 @@ class NamespaceUnmarshalSchema(marsh.schema.core.unmarshal.WrapperUnmarshalSchem
                 return namespace
             candidates.append(candidate)
         raise marsh.errors.UnmarshalError(
-            f'{marsh.utils.get_type_name(self.value)}: '
-            + marsh.utils.get_closest_error_message(
+            marsh.utils.get_closest_error_message(
                 value=name,
                 candidates=candidates,
                 key='name',
             ),
+            path='name',
         )
 
     def unmarshal(

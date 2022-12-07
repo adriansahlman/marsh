@@ -46,19 +46,17 @@ class MarshError(Exception):
         self,
         cause: bool = False,
     ) -> str:
-        msg = self.__class__.__name__
-        if self.args:
-            msg += ': ' + ', '.join(map(str, self.args))
+        pretty = ', '.join(map(str, self.args))
         if self.path:
-            msg = f'{msg}\n\tpath: {self.path}'
+            pretty = f'{pretty}\n\tpath: {self.path}'
         if cause:
             error: BaseException = self
             while error.__cause__ is not None:
                 if not isinstance(error.__cause__, MarshError):
-                    msg = f'{msg}\n\tcause: {error}'
+                    pretty = f'{pretty}\n\tcause: {error}'
                     break
                 error = error.__cause__
-        return msg
+        return pretty
 
     def __str__(
         self,
@@ -68,7 +66,10 @@ class MarshError(Exception):
     def __repr__(
         self,
     ) -> str:
-        return str(self)
+        pretty = self.pretty(cause=True)
+        if pretty:
+            return f'{self.__class__.__name__}: {pretty}'
+        return self.__class__.__name__
 
     def append(
         self,
@@ -98,11 +99,35 @@ class PathError(MarshError, KeyError, IndexError):
 
     Also used for path formatting errors.
     """
+    pass
 
 
 class UnmarshalError(MarshError):
     """Failure to unmarshal an element to a specific type."""
-    pass
+
+    def __init__(
+        self,
+        msg: str = '',
+        path: str = '',
+        element: 'marsh.element.ElementType' = '???',
+        type: Any = '???',
+    ) -> None:
+        super().__init__(msg)
+        self.path = path
+        self.element = element
+        self.type = type
+
+    def pretty(
+        self,
+        cause: bool = False,
+        element: bool = False,
+    ) -> str:
+        pretty = super().pretty(cause)
+        if not marsh.utils.is_missing(self.type):
+            pretty += f'\n\ttype: {marsh.utils.get_type_name(self.type)}'
+        if element and not marsh.utils.is_missing(self.element):
+            pretty += f'\n\telement: {self.element}'
+        return pretty
 
 
 class MissingValueError(UnmarshalError):
@@ -158,10 +183,10 @@ def maybe_handle_error(
     """
     try:
         yield
-    except error as e:
+    except error as err:
         if os.environ.get(_MARSH_FULL_ERROR_ENV, None):
             raise
-        callback(e)
+        callback(err)
 
 
 @contextlib.contextmanager
@@ -178,8 +203,8 @@ def prepend(
     """
     try:
         yield
-    except MarshError as e:
+    except MarshError as err:
         field = str(field)
         if field:
-            e.prepend(field)
+            err.prepend(field)
         raise

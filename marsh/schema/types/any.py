@@ -51,7 +51,12 @@ class AnyUnmarshalSchema(marsh.schema.UnmarshalSchema[marsh.element.ElementType]
         if marsh.utils.is_missing(element):
             if self.has_default():
                 return self.get_default()
-            raise marsh.errors.MissingValueError
+            raise marsh.errors.MissingValueError(
+                type=self.value,
+            )
         if marsh.element.has_missing(element):
-            raise marsh.errors.MissingValueError(f'contains missing value: {element}')
+            raise marsh.errors.MissingValueError(
+                'element contains missing value',
+                type=self.value,
+            )
         return element

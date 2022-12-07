@@ -87,9 +87,9 @@ def parsing(
         original_source = ''.join(source)
     try:
         yield source
-    except ParseError as e:
-        e.source = original_source
-        raise e
+    except ParseError as err:
+        err.source = original_source
+        raise err
     remaining = list(source)
     consume_whitespace(remaining)
     if remaining and peek(remaining) not in terminal_chars:
@@ -409,9 +409,9 @@ def terminal(
             source,
             terminal_chars=terminal_chars,
         )
-    except ParseError as e:
-        e.source = original_source
-        raise e
+    except ParseError as err:
+        err.source = original_source
+        raise err
     if quoted or not value:
         return value
     try:

@@ -2033,11 +2033,11 @@ def str_to_int(
     """
     try:
         return int(value)
-    except ValueError as e:
+    except ValueError as err:
         try:
             return float_to_int(float(value))
         except ValueError:
-            raise e from None
+            raise err from None
 
 
 def float_to_int(

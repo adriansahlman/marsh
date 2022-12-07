@@ -2,6 +2,7 @@ import collections
 from typing import (
     Any,
     Callable,
+    Generic,
     Mapping,
     TypeVar,
 )
@@ -13,7 +14,7 @@ from . import mapping
 _T = TypeVar('_T')
 
 
-class InitType:
+class InitType(Generic[_T]):
 
     _sentinel: Any = object()
 

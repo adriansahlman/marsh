@@ -83,6 +83,7 @@ class NoneUnmarshalSchema(marsh.schema.UnmarshalSchema[None]):
         if element is None or marsh.utils.is_missing(element):
             return None
         raise marsh.errors.UnmarshalError(
-            f'{marsh.utils.get_type_name(self.value)}: '
-            f'expected `None`, got: {element}',
+            'expected `None`',
+            element=element,
+            type=self.value,
         )

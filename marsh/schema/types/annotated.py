@@ -122,9 +122,9 @@ class AnnotatedUnmarshalSchema(marsh.schema.UnmarshalSchema[Any]):
                     value = ann(value)
                 except marsh.errors.MarshError:
                     raise
-                except Exception as e:
+                except Exception as err:
                     raise marsh.errors.UnmarshalError(
                         f'custom annotation {ann.__class__.__name__}'
-                        f' failed: {e}',
-                    )
+                        f' failed: {err}',
+                    ) from err
         return value

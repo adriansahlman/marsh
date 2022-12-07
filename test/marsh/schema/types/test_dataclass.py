@@ -71,7 +71,7 @@ class WithInitVar:
         self,
         a,
     ) -> None:
-        self.a = a
+        self.a = a  # type: ignore
 
     def __eq__(
         self,
@@ -79,7 +79,7 @@ class WithInitVar:
     ) -> bool:
         if not type(other) == type(self):
             return False
-        return other.a == self.a
+        return other.a == self.a  # type: ignore
 
 
 A_dict = {

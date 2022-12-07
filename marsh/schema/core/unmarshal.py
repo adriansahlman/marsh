@@ -385,7 +385,7 @@ class UnmarshalSchema(
     ) -> None:
         super().__init__(*args, **kwargs)
         self.default = default
-        self.default_factory = default_factory  # type: ignore
+        self.default_factory = default_factory
 
     def __str__(
         self,

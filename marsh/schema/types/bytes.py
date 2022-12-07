@@ -80,16 +80,23 @@ class BytesUnmarshalSchema(marsh.schema.UnmarshalSchema[bytes]):
         if marsh.utils.is_missing(element):
             if self.has_default():
                 return self.get_default()
-            raise marsh.errors.MissingValueError
+            raise marsh.errors.MissingValueError(
+                type=self.value,
+            )
         if not marsh.utils.is_primitive(element):
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: expected '
-                f'a primitive value, got: {element}',
+                (
+                    f'expected a primitive value, got: '
+                    f'{marsh.utils.get_type_name(element)}'
+                ),
+                element=element,
+                type=self.value,
             )
         try:
             return marsh.utils.base64_to_bytes(str(element))
         except Exception:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: failed '
-                f'to convert to bytes: {element}',
+                'failed to unmarshal bytes',
+                element=element,
+                type=self.value,
             )

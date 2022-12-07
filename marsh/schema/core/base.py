@@ -50,7 +50,7 @@ class SchemaSelection(List[Type[_S]], Generic[_S]):
             return self.__class__(super().__getitem__(index))
         return super().__getitem__(index)
 
-    def __add__(
+    def __add__(  # type: ignore
         self,
         other,
     ) -> 'SchemaSelection[_S]':

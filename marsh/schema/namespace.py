@@ -625,6 +625,7 @@ class Namespace(Mapping[str, core.unmarshal.UnmarshalSchema[_T]]):
                     candidates=self,
                     key='name',
                 ),
+                element=element,
             )
         if args and kwargs:
             raise TypeError(

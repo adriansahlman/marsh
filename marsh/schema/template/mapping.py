@@ -57,8 +57,12 @@ class MappingUnmarshalSchema(UnmarshalSchema[_T]):
             return self.construct({})
         if not marsh.utils.is_mapping(element):
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                f'expected mapping element, got: {element}',
+                (
+                    'expected mapping element, got: '
+                    f'{marsh.utils.get_type_name(element)}'
+                ),
+                element=element,
+                type=self.value,
             )
         prepared_input = {}
         for key in element.keys():
@@ -70,11 +74,14 @@ class MappingUnmarshalSchema(UnmarshalSchema[_T]):
             return self.construct(prepared_input)
         except marsh.errors.MarshError:
             raise
-        except Exception:
+        except Exception as err:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                f'failed to construct mapping',
-            )
+                (
+                    f'failed to construct mapping: {err}'
+                ),
+                element=element,
+                type=self.value,
+            ) from err
 
     def construct(
         self,

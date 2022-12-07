@@ -61,12 +61,16 @@ class LiteralUnmarshalSchema(marsh.schema.template.UnionUnmarshalSchema[_T]):
                 candidates=(schema.literal_value for schema in self.schemas),
             )
             err_msg = (
-                'failed to unmarshal input `{element}` into one '
-                f'of the literals {self.doc_field_type()}'
+                'failed to unmarshal input into one '
+                f'of the literals {get_args(self.value)}'
             )
             if closest:
                 err_msg += f', did you mean "{closest}"?'
-            raise marsh.errors.UnmarshalError(err_msg)
+            raise marsh.errors.UnmarshalError(
+                err_msg,
+                element=element,
+                type=self.value,
+            )
 
 
 @marsh.schema.register
@@ -143,8 +147,11 @@ class LiteralValueUnmarshalSchema(marsh.schema.UnmarshalSchema[_T]):
         literal_value = self.schema.unmarshal(element)
         if literal_value != self.literal_value:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                'could not match the literal '
-                f'{self.literal_value}: {element}',
+                (
+                    'input did not match the literal '
+                    f'value {self.literal_value}'
+                ),
+                element=element,
+                type=self.value,
             )
         return literal_value

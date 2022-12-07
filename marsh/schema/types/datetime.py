@@ -114,17 +114,20 @@ class DatetimeUnmarshalSchema(
         element: marsh.element.ElementType,
     ) -> Union[datetime.time, datetime.date]:
         if marsh.utils.is_missing(element):
-            raise marsh.errors.MissingValueError
+            raise marsh.errors.MissingValueError(
+                type=self.value,
+            )
         try:
             if marsh.utils.is_mapping(element):
                 return self.value(**element)
             elif marsh.utils.is_sequence(element):
                 return self.value(*element)
-        except Exception:
+        except Exception as err:
             raise marsh.errors.UnmarshalError(
-                f'failed to initialize {self.value.__name__} '
-                f'with input: {element}',
-            )
+                f'failed to unmarshal: {err}',
+                element=element,
+                type=self.value,
+            ) from err
         dt: Optional[datetime.datetime] = None
         try:
             ts = marsh.utils.cast_primitive(float, str(element))
@@ -137,7 +140,9 @@ class DatetimeUnmarshalSchema(
                 dt = dateparser.parse(element, settings={'DATE_ORDER': 'DMY'})
         if dt is None:
             raise marsh.errors.UnmarshalError(
-                f'failed to parse as timestamp: {element}',
+                'failed to parse timestamp',
+                element=element,
+                type=self.value,
             )
         if self.value == datetime.time:
             return dt.time()

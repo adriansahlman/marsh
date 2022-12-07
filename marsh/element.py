@@ -102,7 +102,7 @@ def iterative_select(
     else:
         raise marsh.errors.PathError(
             'can not traverse the path '
-            f'"{path}" for the element {element}',
+            f'"{path}" for the element',
         )
     with marsh.errors.prepend(field):
         for selection in selections:
@@ -271,7 +271,7 @@ def override(
     else:
         raise marsh.errors.PathError(
             'can not traverse the path '
-            f'"{path}" for the element {element}',
+            f'"{path}" for the element',
         )
     return element
 
@@ -438,7 +438,9 @@ def resolve(
             resolve=True,
             enum_to_str=True,
         )
-    except Exception as e:
-        if isinstance(e, omegaconf.errors.OmegaConfBaseException):
-            raise
-        raise marsh.errors.MarshError(f'failed to resolve element: {element}')
+    except omegaconf.errors.OmegaConfBaseException:
+        raise
+    except Exception as err:
+        raise marsh.errors.MarshError(
+            f'failed to resolve element: {err}',
+        )

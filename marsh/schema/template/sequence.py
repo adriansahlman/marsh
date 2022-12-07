@@ -50,8 +50,12 @@ class SequenceUnmarshalSchema(UnmarshalSchema[_T]):
             return self.construct(())
         if not marsh.utils.is_sequence(element):
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                f'expected sequence element, got: {element}',
+                (
+                    'expected sequence element, got: '
+                    f'{marsh.utils.get_type_name(element)}'
+                ),
+                element=element,
+                type=self.value,
             )
         prepared_input = []
         for i, item in enumerate(element):
@@ -62,11 +66,14 @@ class SequenceUnmarshalSchema(UnmarshalSchema[_T]):
             return self.construct(prepared_input)
         except marsh.errors.MarshError:
             raise
-        except Exception:
+        except Exception as err:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                f'failed to construct sequence',
-            )
+                (
+                    f'failed to construct sequence: {err}'
+                ),
+                element=element,
+                type=self.value,
+            ) from err
 
     def construct(
         self,

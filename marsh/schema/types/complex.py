@@ -109,15 +109,20 @@ class ComplexUnmarshalSchema(marsh.schema.UnmarshalSchema[complex]):
         if marsh.utils.is_missing(element):
             if self.has_default():
                 return self.get_default()
-            raise marsh.errors.MissingValueError
+            raise marsh.errors.MissingValueError(
+                type=self.value,
+            )
         try:
             arg: Arg = marsh.unmarshal(Arg, element)  # type: ignore
         except Exception:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                'failed to unmarshal input element '
-                'into a float, tuple of floats or mapping '
-                f'with optional keys `name` and `level`: {element}',
+                (
+                    'failed to unmarshal input element '
+                    'into a float, tuple of floats or mapping '
+                    'with optional keys `name` and `level`'
+                ),
+                element=element,
+                type=self.value,
             )
         if isinstance(arg, float):
             return complex(arg)

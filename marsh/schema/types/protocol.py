@@ -96,6 +96,7 @@ class ProtocolUnmarshalSchema(marsh.schema.UnmarshalSchema[Any]):
             except Exception:
                 pass
         raise marsh.errors.UnmarshalError(
-            f'{marsh.utils.get_type_name(self.value)}: failed to '
-            f'cast element {element} into one of the classes {self.matched}',
+            f'failed to unmarshal into one of the classes {self.matched}',
+            element=element,
+            type=self.value,
         )

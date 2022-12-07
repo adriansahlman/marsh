@@ -102,10 +102,13 @@ class LoggerUnmarshalSchema(marsh.schema.UnmarshalSchema[logging.Logger]):
             arg: Arg = marsh.unmarshal(Arg, element)  # type: ignore
         except Exception:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                'failed to unmarshal logger input element '
-                'into a string or mapping with optional keys `name` '
-                f'and `level`: {element}',
+                (
+                    'failed to unmarshal input element into a '
+                    'string or mapping with optional keys `name` '
+                    'and `level`'
+                ),
+                element=element,
+                type=self.value,
             )
         if isinstance(arg, str):
             return logging.getLogger(arg)
@@ -118,7 +121,8 @@ class LoggerUnmarshalSchema(marsh.schema.UnmarshalSchema[logging.Logger]):
                 logger.setLevel(arg['level'])
             except Exception:
                 raise marsh.errors.UnmarshalError(
-                    f'{marsh.utils.get_type_name(self.value)}: could not set '
-                    f'logging level to "{arg["level"]}"',
+                    f'could not set logging level to "{arg["level"]}"',
+                    element=element,
+                    type=type,
                 )
         return logger

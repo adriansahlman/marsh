@@ -106,8 +106,12 @@ class PrimitiveUnmarshalSchema(marsh.schema.UnmarshalSchema[_P]):
             raise marsh.errors.MissingValueError
         if not marsh.utils.is_primitive(element):
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: expected '
-                f'a primitive value, got: {element}',
+                (
+                    f'expected a primitive value, got: '
+                    f'{marsh.utils.get_type_name(element)}'
+                ),
+                element=element,
+                type=self.value,
             )
         try:
             return marsh.utils.cast_primitive(
@@ -116,6 +120,7 @@ class PrimitiveUnmarshalSchema(marsh.schema.UnmarshalSchema[_P]):
             )
         except Exception:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                f'could not convert: {element}',
+                f'could not convert to {marsh.utils.get_type_name(self.value)}',
+                element=element,
+                type=self.value,
             )

@@ -173,8 +173,12 @@ class StructuredUnmarshalSchema(UnmarshalSchema[_T]):
             element_list = list(element)
         else:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: expected a '
-                f'mapping or sequence element, got: {element}',
+                (
+                    'expected a mapping or sequence element, got: '
+                    f'{marsh.utils.get_type_name(element)}'
+                ),
+                element=element,
+                type=self.value,
             )
         self.validate_defaults(
             args=default_args,
@@ -222,17 +226,19 @@ class StructuredUnmarshalSchema(UnmarshalSchema[_T]):
                             args.append(kwargs.pop(name))
         for key in element_dict:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: '
-                + marsh.utils.get_closest_error_message(
+                marsh.utils.get_closest_error_message(
                     key,
                     self.schemas,
                     key='key',
                 ),
+                element=element,
+                type=self.value,
             )
         if element_list:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: received too '
-                f'many arguments. unconsumed arguments: {element_list}',
+                f'received too many arguments ({len(element_list)}).',
+                element=element,
+                type=self.value,
             )
         return self.construct(*args, **kwargs)
 

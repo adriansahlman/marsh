@@ -112,10 +112,16 @@ class EnumValueUnmarshalSchema(marsh.schema.UnmarshalSchema[_E]):
         if marsh.utils.is_missing(element):
             if self.has_default():
                 return self.get_default()
-            raise marsh.errors.MissingValueError
+            raise marsh.errors.MissingValueError(
+                type=self.value,
+            )
         if not marsh.utils.is_primitive(element):
             raise marsh.errors.UnmarshalError(
-                f'expected a primitive value for an enum, got: {element}',
+                (
+                    'expected a primitive value for an enum, got: '
+                ),
+                element=element,
+                type=self.value,
             )
         try:
             marsh.utils.cast_literal(self.value.name, element)
@@ -128,7 +134,10 @@ class EnumValueUnmarshalSchema(marsh.schema.UnmarshalSchema[_E]):
         except ValueError:
             pass
         raise marsh.errors.UnmarshalError(
-            f'{marsh.utils.get_type_name(self.value)}: could not '
-            f'convert to enum name ({self.value.name}) '
-            f'or enum value ({self.value.value}): {element}',
+            (
+                f'could not convert to enum name ({self.value.name}) '
+                f'or enum value ({self.value.value})'
+            ),
+            element=element,
+            type=self.value,
         )

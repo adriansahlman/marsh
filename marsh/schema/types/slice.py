@@ -103,24 +103,29 @@ class SliceUnmarshalSchema(marsh.schema.UnmarshalSchema[slice]):
             args = marsh.cast(Tuple[Optional[int], ...], element)  # type: ignore
             if len(args) > 3:
                 raise marsh.errors.UnmarshalError(
-                    f'{marsh.utils.get_type_name(self.value)}: at most '
-                    '3 optional integers may be used to construct a '
-                    f'slice. Got {element}',
+                    f'at most 3 optional integers may be used to construct a '
+                    f'slice. Got {len(element)} values',
                 )
         else:
             element = str(element)
             if not slice_pattern.match(element):
                 raise marsh.errors.UnmarshalError(
-                    f'{marsh.utils.get_type_name(self.value)}: not valid '
-                    f'slice syntax: "{element}"',
+                    'invalid slice syntax',
+                    element=element,
+                    type=self.value,
                 )
-            args = tuple(int(index) if index else None for index in element.split(':'))
+            args = tuple(
+                int(index) if index else None
+                for index
+                in element.split(':')
+            )
         if not args:
             return slice(None)
         try:
             return slice(*args)
-        except Exception:
+        except Exception as err:
             raise marsh.errors.UnmarshalError(
-                f'{marsh.utils.get_type_name(self.value)}: failed '
-                'to construct object',
-            )
+                f'failed to construct: {err}',
+                element=element,
+                type=self.value,
+            ) from err
