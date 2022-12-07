@@ -5,7 +5,7 @@ docstring-parser >= 0.7.3
 dateparser >= 1.1.1
 
 # linting
-mypy == 0.950
+mypy == 0.982
 flake8 >= 3.8
 
 # formating
