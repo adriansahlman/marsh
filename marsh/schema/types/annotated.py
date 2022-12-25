@@ -1,5 +1,6 @@
 from typing import (
     Any,
+    List,
     Mapping,
     Optional,
     Sequence,
@@ -106,25 +107,52 @@ class AnnotatedUnmarshalSchema(marsh.schema.UnmarshalSchema[Any]):
         self,
         element: marsh.element.ElementType,
     ) -> Any:
-        value = self.schema.unmarshal(element)
+        pre_annotations: List[marsh.annotation.PreAnnotation] = []
+        annotations: List[marsh.annotation.Annotation] = []
         for ann in marsh.utils.get_annotations(self.value):
             try:
-                if issubclass(ann, marsh.annotation.Annotation):
+                if issubclass(
+                    ann,
+                    (
+                        marsh.annotation.Annotation,
+                        marsh.annotation.PreAnnotation,
+                    ),
+                ):
                     ann = ann()
             except TypeError:
                 pass
             try:
-                is_ann = isinstance(ann, marsh.annotation.Annotation)
+                if isinstance(
+                    ann,
+                    marsh.annotation.Annotation,
+                ):
+                    annotations.append(ann)
+                elif isinstance(
+                    ann,
+                    marsh.annotation.PreAnnotation,
+                ):
+                    pre_annotations.append(ann)
             except TypeError:
                 continue
-            if is_ann:
-                try:
-                    value = ann(value)
-                except marsh.errors.MarshError:
-                    raise
-                except Exception as err:
-                    raise marsh.errors.UnmarshalError(
-                        f'custom annotation {ann.__class__.__name__}'
-                        f' failed: {err}',
-                    ) from err
+        for ann in pre_annotations:
+            try:
+                element = ann(element)
+            except marsh.errors.MarshError:
+                raise
+            except Exception as err:
+                raise marsh.errors.UnmarshalError(
+                    f'custom pre-annotation {ann.__class__.__name__}'
+                    f' failed: {err}',
+                ) from err
+        value = self.schema.unmarshal(element)
+        for ann in annotations:
+            try:
+                value = ann(value)
+            except marsh.errors.MarshError:
+                raise
+            except Exception as err:
+                raise marsh.errors.UnmarshalError(
+                    f'custom annotation {ann.__class__.__name__}'
+                    f' failed: {err}',
+                ) from err
         return value

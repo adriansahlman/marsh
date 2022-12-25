@@ -23,6 +23,19 @@ for mod in (typing, typing_extensions):
         pass
 
 
+class PreAnnotation(marsh.annotation.PreAnnotation):
+
+    def __call__(
+        self,
+        element: marsh.element.ElementType,
+    ) -> marsh.element.ElementType:
+        if element == 'zero':
+            return 0
+        if element == 'one':
+            return 1
+        return element
+
+
 @pytest.mark.parametrize(
     'type_,element,value',
     sum(
@@ -112,6 +125,26 @@ for mod in (typing, typing_extensions):
                     Annotated[list, marsh.annotation.Populated()],
                     (1, 2),
                     [1, 2],
+                ),
+                (
+                    Annotated[int, PreAnnotation],
+                    'zero',
+                    0,
+                ),
+                (
+                    Annotated[int, PreAnnotation()],
+                    'one',
+                    1,
+                ),
+                (
+                    Annotated[int, PreAnnotation],
+                    3,
+                    3,
+                ),
+                (
+                    Annotated[int, PreAnnotation()],
+                    '1',
+                    1,
                 ),
             )
             for Annotated in _AnnotatedTypes

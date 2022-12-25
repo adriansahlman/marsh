@@ -24,7 +24,7 @@ from ._functional import (
 import marsh.schema.types  # noqa: F401
 
 
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 
 
 # singleton class, create a reference for easy access

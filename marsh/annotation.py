@@ -38,10 +38,29 @@ from typing import (
     TypeVar,
 )
 
+import marsh
 
-_T = TypeVar('_T', bound=Any)
+
 _NumberType = TypeVar('_NumberType', bound=numbers.Number)
 _SizedType = TypeVar('_SizedType', bound=Sized)
+
+
+class PreAnnotation:
+
+    def __call__(
+        self,
+        element: marsh.element.ElementType,
+    ) -> marsh.element.ElementType:
+        """Validate and/or transform the input
+        before it is unmarshaled.
+
+        Arguments:
+            element: The input to validate/transform.
+
+        Returns:
+            The validated and/or transformed input.
+        """
+        return element
 
 
 class Annotation:
@@ -52,8 +71,8 @@ class Annotation:
 
     def __call__(
         self,
-        value: _T,
-    ) -> _T:
+        value: Any,
+    ) -> Any:
         """Validate and/or transform the input value.
 
         Arguments:
