@@ -52,10 +52,9 @@ class MarshError(Exception):
         if cause:
             error: BaseException = self
             while error.__cause__ is not None:
-                if not isinstance(error.__cause__, MarshError):
-                    pretty = f'{pretty}\n\tcause: {error}'
-                    break
                 error = error.__cause__
+                if not isinstance(error, MarshError):
+                    return f'{pretty}\n\tcause: {error}'
         return pretty
 
     def __str__(
